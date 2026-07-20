@@ -100,6 +100,15 @@ git log --oneline
 
 The commits were never destroyed — the branch pointer just stopped referencing them. Reflog remembered the SHA, and `reset --hard <sha>` moved the pointer back. **This is the single most valuable safety technique in Git.**
 
+```mermaid
+stateDiagram-v2
+  Committed --> ResetHard: git reset hard HEAD~2
+  ResetHard --> Orphaned: commits unreachable from branch
+  Orphaned --> Reflog: still recorded in reflog
+  Reflog --> Restored: git reset hard using reflog entry
+```
+*Commits look deleted after reset hard but stay recoverable through the reflog.*
+
 ### Recover a deleted branch
 
 Deleted the wrong branch? Its tip is still in the reflog.
@@ -168,6 +177,16 @@ git switch -c rescued a1b2c3d  # rescue it onto a branch
 | …amended and want the old commit back | `git reflog` → `git reset --hard <old-sha>` |
 | …lost a commit not even in the reflog | `git fsck --lost-found` → `git switch -c rescued <sha>` |
 | …lost uncommitted working-tree edits | Nothing in Git — they were never committed. (Editor local history / backups only.) |
+
+```mermaid
+flowchart TD
+  A["Something looks lost"] --> B{"What happened"}
+  B -->|"reset hard lost commits"| C["git reflog then reset hard to sha"]
+  B -->|"deleted a branch"| D["git reflog then switch -c to sha"]
+  B -->|"bad rebase went wrong"| E["git reflog find rebase start then reset hard"]
+  B -->|"not even in reflog"| F["git fsck lost-found"]
+```
+*Matching the symptom to the right recovery command.*
 
 ## 6. Check yourself
 

@@ -72,6 +72,18 @@ Here is the decision table. Memorise it.
 
 The mental model: all three move HEAD. `--soft` stops there. `--mixed` also empties the staging area back to match the new HEAD. `--hard` goes all the way and overwrites your files on disk. `--soft` and `--mixed` never lose work; **`--hard` can**, because it throws away uncommitted changes in the working tree.
 
+```mermaid
+flowchart TD
+  A["git reset target"] --> B{"Which mode"}
+  B -->|"soft"| C["Move HEAD only"]
+  B -->|"mixed default"| D["Move HEAD and index"]
+  B -->|"hard"| E["Move HEAD index and working tree"]
+  C --> F["Changes stay staged"]
+  D --> G["Changes stay unstaged"]
+  E --> H["Changes discarded"]
+```
+*How the three reset modes differ in what they move and what they leave behind.*
+
 ### 3a. The classic use: "un-commit but keep my work"
 
 You committed too early. You want the commit undone but every change kept, ready to re-commit differently.
@@ -184,6 +196,15 @@ git push --force-with-lease origin my-feature
 | Commit is on your solo feature branch | ⚠️ With care | Rewrite, then `push --force-with-lease` |
 | Commit is on a shared branch others pulled | ❌ No | `git revert` — never force-push |
 | Commit is on `main`/`master`/`release` | ❌ Never | `git revert`; treat these as append-only |
+
+```mermaid
+flowchart TD
+  A["Bad commit needs fixing"] --> B{"Has it been pushed and pulled by others"}
+  B -->|"No local only"| C["Amend or reset freely"]
+  B -->|"Yes shared branch"| D["git revert"]
+  B -->|"Yes but solo feature branch"| E["Rewrite then force-with-lease push"]
+```
+*Deciding whether to rewrite history in place or add a revert commit.*
 
 ## 7. Check yourself
 

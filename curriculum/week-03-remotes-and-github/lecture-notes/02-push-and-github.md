@@ -22,6 +22,17 @@ Push only succeeds if it's a **fast-forward** — that is, if the server's branc
 
 > A rejected push means **fetch and integrate first, then push again.** It almost never means `--force`.
 
+```mermaid
+flowchart TD
+  A["git push origin main"] --> B{"Fast forward on server"}
+  B -->|Yes| C["Push succeeds"]
+  B -->|No| D["Push rejected"]
+  D --> E["git fetch origin"]
+  E --> F["Merge or rebase"]
+  F --> A
+```
+*A rejected push is not an error to force past — fetch, integrate, then push again.*
+
 ## 2. Upstream tracking: pushing without arguments forever
 
 Typing `git push origin main` every time is tedious. **Upstream tracking** links a local branch to a specific remote branch so that a bare `git push` and `git pull` just work.

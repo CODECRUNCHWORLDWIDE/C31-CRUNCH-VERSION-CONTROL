@@ -41,6 +41,14 @@ Hooks split into **client-side** (run on your machine) and **server-side** (run 
 
 The **block or not** column is the important one. A hook that can block is a *gate*; a hook that can't is a *reaction*. Exit code is the contract: **exit 0 = allow, any non-zero = abort** (for the hooks that can block).
 
+```mermaid
+flowchart TD
+  A["git commit"] --> B["pre-commit hook runs"]
+  B -->|"exit 0"| C["Commit created"]
+  B -->|"non-zero exit"| D["Commit aborted"]
+```
+*Exit code is the whole contract for a blocking hook: zero allows, non-zero aborts.*
+
 ## 3. A real `pre-commit` hook
 
 Let's write one that does three genuinely useful things: reject commits that leave `TODO` markers you flagged as blocking, block accidental large files, and run a formatter check. Put this in `.git/hooks/pre-commit`:
@@ -164,6 +172,22 @@ git bisect reset    # returns you to the branch/commit you started from
 ```
 
 `git bisect reset` is not optional. Until you run it, you're in a detached `HEAD` mid-search.
+
+```mermaid
+sequenceDiagram
+  participant Dev as Developer
+  participant Git as Git
+  Dev->>Git: bisect start
+  Dev->>Git: bisect bad HEAD
+  Dev->>Git: bisect good v1.4.0
+  Git-->>Dev: checkout commit at midpoint
+  Dev->>Git: bisect good or bisect bad
+  Git-->>Dev: checkout next midpoint
+  Note over Dev,Git: repeat, halving the range each time
+  Git-->>Dev: first bad commit reported
+  Dev->>Git: bisect reset
+```
+*Each verdict halves the remaining range until Git names the first bad commit.*
 
 ### Two escape valves
 

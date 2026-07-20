@@ -25,6 +25,15 @@ A common mistake is reading a diff top to bottom, file by alphabetical file. Tha
 
 For large diffs, review **commit by commit** if the author structured the history well (`base...head` shows the whole thing; each commit is a chapter). GitHub's "Commits" tab lets you do this.
 
+```mermaid
+flowchart TD
+  A["Read the PR description"] --> B["Find the main file"]
+  B --> C["Follow the data and call flow"]
+  C --> D["Read tests as a spec"]
+  D --> E["Skim mechanical changes last"]
+```
+*Read a diff in this order, not top to bottom by filename.*
+
 ## 3. What to look for (and what to let go)
 
 Aim your limited attention at what matters. Roughly in priority order:
@@ -75,6 +84,16 @@ When you submit a review, GitHub makes you pick one of three:
 | **Comment** | Feedback, no explicit judgment | You have thoughts but aren't gating the merge, or you're not the deciding reviewer. |
 | **Approve** | "Ship it." | The change improves the codebase and you'd be comfortable with it merging as-is (or with the trivial nits you noted). |
 | **Request changes** | "Do not merge until we resolve this." | There's a real problem — a bug, a security hole, a design issue — that *must* be addressed before merge. |
+
+```mermaid
+flowchart TD
+  A["Finished reviewing"] --> B{"Real problem found"}
+  B -->|Yes| C["Request changes"]
+  B -->|No| D{"Only taste or minor nits"}
+  D -->|Yes| E["Approve, maybe with nits"]
+  D -->|No, just musing| F["Comment"]
+```
+*Choosing honestly between the three review verdicts.*
 
 Two disciplines here:
 

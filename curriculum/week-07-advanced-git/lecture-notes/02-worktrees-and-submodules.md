@@ -20,6 +20,14 @@ A **worktree** is a checkout of your repo in its own directory. When you `git in
 
 The payoff: switching "branches" becomes switching *directories*. No stashing. No rebuilding. Your feature branch stays exactly as you left it, editor state and all, while you work in a second window on the fix.
 
+```mermaid
+flowchart TD
+  G["Shared object database in dot-git"] --> W1["Main worktree - branch feature exporter"]
+  G --> W2["Hotfix worktree - branch hotfix crash"]
+  G --> W3["Review worktree - detached HEAD"]
+```
+*All worktrees point at one shared object database, but each has its own branch, index, and HEAD.*
+
 ```bash
 # From inside your repo, create a worktree for a hotfix branch:
 git worktree add ../myproject-hotfix -b hotfix/crash main
@@ -109,6 +117,14 @@ git commit -m "Bump parser to v2.1.0"
 ```
 
 Read that last block carefully. Changing the submodule is **two commits**: one conceptually inside the inner repo (moving its `HEAD`) and one in the superproject that records the new pointer. Forget the second and your teammates get a different version than you're running.
+
+```mermaid
+flowchart LR
+  A["Move inner repo to v2.1.0"] --> B["Inner repo HEAD updated"]
+  B --> C["git add the submodule path"]
+  C --> D["Commit records new pointer in superproject"]
+```
+*Bumping a submodule is two separate commits - the inner repo moves, then the superproject records where.*
 
 Pulling others' submodule bumps:
 

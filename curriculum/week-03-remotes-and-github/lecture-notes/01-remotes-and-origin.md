@@ -117,6 +117,14 @@ There are **three** different pointers in play, and confusing them causes most r
 
 `origin/main` is a local, read-only pointer. You cannot check it out and commit to it. It only moves when you run `git fetch` (or `git pull`, which fetches first). This is *by design*: it gives Git a stable "known good" reference to compare your work against.
 
+```mermaid
+flowchart LR
+  Server["Server main on GitHub"] -->|git fetch| Tracking["origin main tracking branch"]
+  Tracking -->|git merge| Local["Local main branch"]
+  Local -->|git push| Server
+```
+*Fetch updates the read-only tracking branch; merge moves those commits onto your local branch; push sends yours back to the server.*
+
 That comparison is what produces messages like:
 
 ```

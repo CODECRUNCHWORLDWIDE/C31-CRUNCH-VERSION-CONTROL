@@ -94,6 +94,17 @@ Git opens your editor to write the merge commit's message (default: `Merge branc
 
 > **The base is why merging is smart.** Without a common ancestor, Git couldn't tell an *addition* from a *deletion* — it would only see two different files and force you to reconcile everything by hand. The merge base turns "two versions" into "who changed what, relative to a shared starting point."
 
+```mermaid
+flowchart TD
+  A["Run git merge feature-login on main"] --> B{"Is main an ancestor of feature-login"}
+  B -- Yes --> C["Fast-forward slide the pointer - no new commit"]
+  B -- No --> D["Three-way merge using base ours and theirs"]
+  D --> E{"Same lines changed differently on both sides"}
+  E -- No --> F["Auto-merge and create a merge commit"]
+  E -- Yes --> G["Conflict - stop and ask you to resolve"]
+```
+*Whether a merge fast-forwards or creates a merge commit depends entirely on whether the branches diverged.*
+
 ## 4. Inspecting a merge commit
 
 A merge commit is a normal commit with one unusual property: **two (or more) parents**. Prove it:
@@ -179,6 +190,15 @@ A workable rule of thumb for now:
 | The team standardized on a linear history | **rebase** locally, then `--ff-only` merge |
 
 **The one rule you must not break:** *never rebase commits that other people have already based work on.* Rebasing changes hashes; anyone who pulled the old commits now has a divergent copy, and you've made everyone's day worse. Merging is always safe on shared branches; rebasing is only safe on private ones. Details in Week 4 — for now, when in doubt, **merge**.
+
+```mermaid
+flowchart TD
+  A["Need to integrate diverged work"] --> B{"Has anyone else already pulled this branch"}
+  B -- Yes shared --> C["Merge - safe on shared history"]
+  B -- No still local --> D["Rebase to clean up before sharing"]
+  D --> E["Then fast-forward merge into main"]
+```
+*Merge is always safe on shared branches; rebase is only safe while the branch is still private.*
 
 ## 7. Aborting and octopus merges (brief)
 

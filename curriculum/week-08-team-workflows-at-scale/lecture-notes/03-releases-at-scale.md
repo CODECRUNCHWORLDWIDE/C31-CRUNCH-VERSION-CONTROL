@@ -56,6 +56,18 @@ The **type** classifies the change; two types map directly to SemVer:
 
 Two ways to mark a breaking change: a `!` after the type/scope (`refactor(api)!:`), or a `BREAKING CHANGE: <what broke>` line in the footer. Either one forces a MAJOR bump.
 
+```mermaid
+flowchart TD
+  A["Scan commits since last tag"] --> B{"Any breaking change"}
+  B -->|"Yes"| C["MAJOR bump"]
+  B -->|"No"| D{"Any feat commit"}
+  D -->|"Yes"| E["MINOR bump"]
+  D -->|"No"| F{"Any fix commit"}
+  F -->|"Yes"| G["PATCH bump"]
+  F -->|"No"| H["No release"]
+```
+*Conventional Commits let a tool compute the next SemVer bump with zero human judgment.*
+
 This is the linchpin. Once every commit declares its type, a tool can scan the commits since the last tag, find the highest-impact change (any breaking → MAJOR, else any `feat` → MINOR, else any `fix` → PATCH), and compute the next version with **zero human judgment.** The commit history *is* the release plan.
 
 You can enforce the format locally with a commit-msg hook (`commitlint`) or in CI, so a malformed message is caught before it pollutes the history.
@@ -91,6 +103,17 @@ Now assemble it. The pipeline, conceptually:
 5. Create and push a Git tag `vX.Y.Z`.
 6. Create a GitHub Release with the changelog as its notes (and attach build artifacts if any).
 7. Optionally publish to a registry (npm, PyPI, container registry).
+
+```mermaid
+flowchart LR
+  A["Commits since last tag"] --> B["Compute next version"]
+  B --> C["Generate changelog"]
+  C --> D["Bump manifest version"]
+  D --> E["Create and push tag"]
+  E --> F["Create GitHub Release"]
+  F --> G["Publish to registry"]
+```
+*The seven-step release pipeline, run automatically from commit history alone.*
 
 You do **not** write this from scratch. Battle-tested tools do steps 1–7:
 

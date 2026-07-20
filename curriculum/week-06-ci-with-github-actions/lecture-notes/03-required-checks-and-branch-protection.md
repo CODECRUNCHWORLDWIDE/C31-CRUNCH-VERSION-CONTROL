@@ -120,6 +120,17 @@ Step back and see the full mechanism you've now built across three lectures:
 
 > A **push** or **PR** (event) triggers a **workflow**, whose **job** runs your tests on a clean **runner** and reports a named **check**. A **branch protection rule** marks that check **required**. GitHub disables the merge button until the check is green. Therefore: *code that fails the tests cannot be merged.*
 
+```mermaid
+flowchart LR
+  A["Push or PR event"] --> B["Workflow triggered"]
+  B --> C["Job runs tests on runner"]
+  C --> D["Named check reported"]
+  D --> E{"Branch protection requires this check"}
+  E -->|"Green"| F["Merge button enabled"]
+  E -->|"Red or pending"| G["Merge button disabled"]
+```
+*The full chain from a push event to a blocked or enabled merge button.*
+
 That sentence is the deliverable of Week 6. Everything else — matrices, caching, lint and coverage gates — makes the check *better*. This lecture makes it *binding*.
 
 ## 8. Check yourself

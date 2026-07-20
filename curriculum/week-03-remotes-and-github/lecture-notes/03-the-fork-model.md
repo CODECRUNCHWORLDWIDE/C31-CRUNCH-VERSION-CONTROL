@@ -115,6 +115,17 @@ Step 5 creates a **pull request**: a formal "please pull my `fix-typo-in-readme`
 
 Why branch instead of committing to `main`? Because your `main` should stay a pristine mirror of `upstream/main`. If you commit your own work onto `main`, syncing with upstream turns into a mess of merges and conflicts. Keep `main` clean; do all work on topic branches. This is the single most common beginner mistake in the fork model.
 
+```mermaid
+flowchart LR
+  A["Fetch upstream"] --> B["Sync local main"]
+  B --> C["Create branch"]
+  C --> D["Commit changes"]
+  D --> E["Push branch to origin"]
+  E --> F["Open pull request"]
+  F --> G["Maintainer merges into upstream"]
+```
+*The contribution loop: every step routes through either your fork or the original project, never both at once.*
+
 ## 6. Keeping your fork in sync
 
 Here's the catch with forks: the moment GitHub creates your fork, it **stops tracking** the original automatically. The original project keeps getting commits; your fork does not. A week later your fork is behind, and a PR built on stale code invites conflicts. So you must periodically pull upstream's new commits into your fork. Two ways.

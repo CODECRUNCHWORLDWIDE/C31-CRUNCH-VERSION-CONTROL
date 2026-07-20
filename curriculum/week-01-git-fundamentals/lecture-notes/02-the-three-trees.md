@@ -25,6 +25,14 @@ Think of it as an assembly line:
 - The **index** is a staging area: a *draft* of your next commit. You add changes to it deliberately.
 - **HEAD** is the last committed snapshot — your baseline.
 
+```mermaid
+flowchart LR
+  W["Working tree edit here"] -- "git add" --> I["Index stage here"]
+  I -- "git commit" --> H["HEAD commit here"]
+```
+
+*Content moves from working tree to index to HEAD as you add and commit.*
+
 The index is the tree beginners find surprising, because most tools have only "the file" and "the saved version." Git inserts a deliberate middle layer so you can craft a commit precisely instead of dumping every change at once.
 
 ## 2. The index is a real, inspectable thing

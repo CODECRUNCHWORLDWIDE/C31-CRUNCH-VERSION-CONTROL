@@ -91,6 +91,18 @@ The heavyweight, invented by Vincent Driessen in 2010 for software with **schedu
 
 The flow: features merge into `develop`; when `develop` is "enough," you cut a `release/2.4` branch, stabilize it, then merge it into `main` (tag `v2.4.0`) *and* back into `develop`. Production emergencies get a `hotfix/*` off `main`.
 
+```mermaid
+flowchart TD
+  A["feature branch"] --> B["develop"]
+  B --> C["release branch"]
+  C --> D["main"]
+  D --> E["tag v2.4.0"]
+  C --> B
+  F["hotfix branch"] --> D
+  F --> B
+```
+*How features, releases, and hotfixes move through GitFlow's branch types.*
+
 **Optimizes for:** managing **multiple versions in parallel** and a formal, gated release process. If you ship v2.3 to some customers and are building v2.4 for others, GitFlow's release and hotfix branches give you a clean place to do it.
 
 **Costs:** it is the most complex, and its long-lived `feature/*` and `develop` branches are a merge-debt factory. Driessen himself later added a note that for **continuously delivered web apps, GitFlow is overkill** and simpler flows (GitHub flow / trunk-based) are better. Reaching for GitFlow on a web service you deploy ten times a day is a classic over-engineering smell.
@@ -117,6 +129,16 @@ Ask, in order:
 2. **Do you support multiple versions at once?** If v1.x and v2.x both get patches → you need GitFlow-style release/hotfix branches, or a `release/*` overlay on GitHub flow.
 3. **How mature is your CI and how scary is a rollback?** Strong CI + cheap rollback (a web deploy you can revert in a minute) → push toward trunk-based. Weak CI or expensive rollback (firmware, an app-store release) → a heavier gate like GitFlow buys you a stabilization window.
 4. **How disciplined is the team about small changes and feature flags?** Trunk-based punishes teams that can't keep changes small. If you can't, start with GitHub flow and tighten toward trunk-based.
+
+```mermaid
+flowchart TD
+  A["Release cadence"] -->|"Multiple times a day"| B["Trunk-based or GitHub flow"]
+  A -->|"Scheduled, versioned"| C["GitFlow defensible"]
+  B --> D["Need parallel versions"]
+  D -->|"Yes"| E["Add release or hotfix branches"]
+  D -->|"No"| F["Stay lightweight"]
+```
+*The first two questions in choosing a branching strategy.*
 
 A useful default: **most web and SaaS teams should run GitHub flow and drift toward trunk-based as their CI and flag discipline mature. Reach for GitFlow only when parallel versioned releases genuinely force it.** Choosing the heaviest process "to be safe" is a real cost, not free insurance.
 

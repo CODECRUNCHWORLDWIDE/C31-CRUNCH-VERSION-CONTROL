@@ -24,6 +24,15 @@ git rebase -i main     # edit every commit on this branch since it left main
 
 Because rebase creates new commits, the same Golden Rule from Lecture 1 applies: **only rebase commits you haven't shared.** Rebasing published commits and force-pushing breaks anyone who pulled them.
 
+```mermaid
+flowchart LR
+  M["main tip"] --> A1["Replay commit A"]
+  A1 --> B1["Replay commit B"]
+  B1 --> C1["Replay commit C"]
+  C1 --> N["New feature tip"]
+```
+*Rebase replays each commit's diff, one at a time, onto the new base.*
+
 ## 2. The to-do list and its verbs
 
 When you run `git rebase -i HEAD~4`, Git opens something like this (oldest commit at the **top**):
@@ -183,6 +192,16 @@ git rebase -i --autosquash main
 ```bash
 git config --global rebase.autosquash true    # --autosquash on every rebase -i
 ```
+
+```mermaid
+flowchart LR
+  A["Commit with fixup flag targeting an old sha"] --> B["Stack more fixup commits"]
+  B --> C["Run rebase interactive autosquash"]
+  C --> D["Todo list auto arranged"]
+  D --> E["Review and save"]
+  E --> F["Clean squashed history"]
+```
+*The fixup plus autosquash workflow: mark fixups as you go, then let Git assemble the cleanup.*
 
 A related time-saver: `git commit --amend` targets only the *last* commit, but `--fixup` targets *any* commit — making it the tool of choice when the thing you need to fix is buried three commits back.
 

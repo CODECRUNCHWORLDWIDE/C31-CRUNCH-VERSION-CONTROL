@@ -78,6 +78,18 @@ git status                 # confirm no more unmerged paths
 git commit                 # completes the merge
 ```
 
+```mermaid
+flowchart TD
+  A["git status shows unmerged paths"] --> B["Open each conflicted file"]
+  B --> C["Decide final content - ours theirs or combined"]
+  C --> D["Delete the conflict marker lines"]
+  D --> E["git add the resolved file"]
+  E --> F{"More conflicted files"}
+  F -- Yes --> B
+  F -- No --> G["git commit completes the merge"]
+```
+*Resolving a conflict is just editing plus staging, repeated until git status is clean.*
+
 That's it. There is no separate "resolve" command — resolution *is* editing the file and staging it. `git add` on a conflicted file is you asserting "I fixed this."
 
 ## 4. "Ours," "theirs," and taking one side wholesale

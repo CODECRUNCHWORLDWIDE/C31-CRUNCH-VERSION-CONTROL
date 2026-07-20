@@ -10,6 +10,16 @@ A great PR **does the reviewer's homework for them.** Your goal is to make appro
 
 There are five parts to get right: the **title**, the **description**, the **links**, the **checklist**, and the **metadata** (reviewers, labels, draft state). Let's take them in order.
 
+```mermaid
+flowchart TD
+  PR["Great pull request"] --> T["Title - imperative mood"]
+  PR --> D["Description - what why how to test"]
+  PR --> L["Linked issues - closes number"]
+  PR --> C["Checklist - tests docs self review"]
+  PR --> M["Metadata - reviewers labels draft state"]
+```
+*The five parts every great PR gets right.*
+
 ## 2. The title
 
 The title is what shows up in the PR list, in notifications, and — if you squash-merge — in the `main` commit history forever. Make it earn its place.
@@ -123,6 +133,15 @@ gh pr ready
 ```
 
 In the web UI, click the dropdown next to "Create pull request" and choose **Create draft pull request**; later, click **Ready for review**. The etiquette: **draft = "not asking for your time yet, but you can peek."** Ready = "please review." Don't request a formal review on a draft, and don't leave something in draft for a week with no note about what it's waiting on.
+
+```mermaid
+stateDiagram-v2
+  [*] --> Draft : gh pr create --draft
+  Draft --> ReadyForReview : gh pr ready
+  ReadyForReview --> Merged : approved and checks green
+  Merged --> [*]
+```
+*A PR's lifecycle from draft to merged.*
 
 ## 7. Metadata: reviewers, assignees, labels
 

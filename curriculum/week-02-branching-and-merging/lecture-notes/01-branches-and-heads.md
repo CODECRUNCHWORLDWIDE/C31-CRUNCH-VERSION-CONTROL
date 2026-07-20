@@ -43,6 +43,15 @@ Two levels of indirection. This is the whole trick, and it explains a lot of beh
 
 `git branch` moves a branch pointer. `git commit` moves it too. `HEAD` just follows along, naming whichever branch is "current."
 
+```mermaid
+flowchart LR
+  H["HEAD"] --> M["main branch pointer"]
+  M --> C1["commit 9f4c2b1"]
+  C1 --> C2["parent commit"]
+  C2 --> C3["earlier parent commit"]
+```
+*HEAD points at a branch, which points at a commit, which points at its parent — two levels of indirection reach the whole history.*
+
 ### Detached HEAD
 
 Sometimes `HEAD` contains a raw commit hash instead of `ref: refs/heads/...`. This is **detached HEAD** — you're sitting on a commit directly, not on any branch.
@@ -162,6 +171,15 @@ Remember: deleting a branch only removes the *pointer*. The commits themselves l
 3. Updates the working tree and index to match `other-branch`'s commit — replacing, adding, and removing files as needed.
 
 That step 1 refusal is why beginners sometimes feel "stuck." The fix is almost always: commit your work, or `git stash` it (a Week-4 tool that shelves changes temporarily), then switch.
+
+```mermaid
+flowchart TD
+  A["Run git switch other-branch"] --> B{"Would the switch overwrite uncommitted changes"}
+  B -- Yes --> C["Refuse and ask to commit or stash"]
+  B -- No --> D["Rewrite HEAD to point at other-branch"]
+  D --> E["Update working tree and index to match other-branch"]
+```
+*git switch checks for unsaved work before it ever moves HEAD or touches your files.*
 
 ```bash
 git switch main

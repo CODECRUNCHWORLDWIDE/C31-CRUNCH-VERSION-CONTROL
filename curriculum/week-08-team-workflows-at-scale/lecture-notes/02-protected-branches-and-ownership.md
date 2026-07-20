@@ -8,6 +8,16 @@ A branching strategy (Lecture 1) is a *promise*. Branch protection is how you ma
 
 By default, anyone with write access can `git push` straight to `main` and force-push over history. A **protected branch** on GitHub replaces "can" with "can't, unless these conditions are met." Protection is configured per-branch (or per-pattern like `release/*`) in the repo's settings, or as an **organization ruleset** that applies across many repos at once.
 
+```mermaid
+flowchart LR
+  A["Push attempt"] --> B{"Direct to protected branch"}
+  B -->|"Yes"| C["Blocked"]
+  B -->|"No, opens PR"| D["Reviews and CI checks"]
+  D -->|"Pass"| E["Merge allowed"]
+  D -->|"Fail"| F["Merge blocked"]
+```
+*A protected branch turns a direct push into a gated pull-request path.*
+
 The rules you'll actually use, and precisely what each one blocks:
 
 | Rule | What it enforces |
@@ -68,6 +78,17 @@ gh api repos/:owner/:repo/branches/main/protection | jq '.enforce_admins.enabled
 ## 3. CODEOWNERS — routing review to the right humans
 
 A `CODEOWNERS` file maps **paths to owners**. When a PR changes a matching path, GitHub automatically requests a review from that owner, and — if "Require review from Code Owners" is on — that owner's approval becomes mandatory to merge. It is how a large codebase makes sure the database team sees database changes and the security team sees auth changes, without anyone remembering to add them.
+
+```mermaid
+flowchart TD
+  A["Path changed in PR"] --> B["Match CODEOWNERS patterns top to bottom"]
+  B --> C["Last matching pattern wins"]
+  C --> D["GitHub requests review from that owner"]
+  D --> E{"Require review from Code Owners is on"}
+  E -->|"Yes"| F["Owner approval required to merge"]
+  E -->|"No"| G["Owner requested but optional"]
+```
+*How a changed path resolves to a mandatory or optional reviewer.*
 
 Put it at `.github/CODEOWNERS` (also valid at repo root or `docs/`). Syntax is gitignore-style patterns, each followed by one or more owners (users with `@name`, teams with `@org/team`, or emails):
 

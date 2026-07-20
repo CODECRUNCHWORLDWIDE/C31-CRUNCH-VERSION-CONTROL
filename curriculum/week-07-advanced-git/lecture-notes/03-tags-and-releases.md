@@ -32,6 +32,16 @@ Before you name a version, decide *how* you name versions. The near-universal co
 | **MINOR** | you add functionality in a **backwards-compatible** way | `2.4.1 → 2.5.0` |
 | **PATCH** | you make a **backwards-compatible bug fix** | `2.4.1 → 2.4.2` |
 
+```mermaid
+flowchart TD
+  A["What kind of change?"] --> B{"Breaks existing API?"}
+  B -->|"Yes"| C["Bump MAJOR"]
+  B -->|"No"| D{"Adds functionality?"}
+  D -->|"Yes"| E["Bump MINOR"]
+  D -->|"No"| F["Bump PATCH"]
+```
+*Deciding which part of MAJOR.MINOR.PATCH to bump is a small decision tree.*
+
 The contract SemVer gives your users: reading the version *tells them the risk of upgrading*. A PATCH bump is safe; a MINOR adds things but won't break them; a MAJOR means "read the migration notes." That predictability is the entire value.
 
 Two more pieces of the spec worth knowing:
@@ -92,6 +102,15 @@ Read that: **14 commits after `v1.2.0`, at commit `2414bc4`** (the `g` is for "g
 A **tag** is a Git concept: it lives in the repository. A **release** is a **GitHub** (or GitLab, etc.) concept layered *on top of* a tag: it's a page with release notes, and — crucially — a place to attach **binary artifacts** (compiled builds, installers, checksums) that don't belong in Git history.
 
 The relationship: **every release is built on a tag, but not every tag needs a release.** You tag the commit; GitHub turns that tag into a release with prose and downloads.
+
+```mermaid
+flowchart LR
+  A["Commit"] --> B["Annotated tag v1.2.0"]
+  B --> C["GitHub Release"]
+  C --> D["Release notes"]
+  C --> E["Binary artifacts"]
+```
+*A release is built on top of a tag - the tag alone never carries notes or downloadable artifacts.*
 
 Why the artifacts matter: Git is for *source*, not for 40 MB compiled binaries. Releases are the correct home for "here's the built `.zip`/`.tar.gz`/`.exe` for this version" — versioned, downloadable, and out of your Git object database.
 

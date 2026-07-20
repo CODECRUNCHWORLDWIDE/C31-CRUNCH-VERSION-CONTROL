@@ -16,6 +16,16 @@ You can already commit. So why not just commit to `main` and push? On a solo toy
 
 That's the whole model. No `develop` branch, no `release/*` branches, no `git flow` ceremony. (Those exist — you'll meet them in Week 8 — but they solve problems a small team usually doesn't have yet.)
 
+```mermaid
+flowchart LR
+  A["Branch off main"] --> B["Commit small changes"]
+  B --> C["Push and open PR"]
+  C --> D["Review"]
+  D --> E["Merge to main"]
+  E --> A
+```
+*The GitHub flow loop — every change takes this same round trip back to main.*
+
 ## 2. The loop, step by step
 
 Here's one full trip around GitHub flow, in commands. Assume you've cloned a repo and you're on an up-to-date `main`.

@@ -86,6 +86,15 @@ git symbolic-ref HEAD        # refs/heads/main — what HEAD points at
 
 A **branch is a ref that moves.** When you commit on `main`, Git writes the new commit and overwrites `.git/refs/heads/main` with the new SHA. That's the whole mechanism. Creating a branch just writes a new 41-byte file (40 hex + newline) — which is why branches are effectively free.
 
+```mermaid
+flowchart LR
+  HEAD["HEAD symbolic ref"] --> Main["main branch ref"]
+  Main --> C2["Commit add line two"]
+  C2 --> C1["Commit add notes"]
+```
+
+*HEAD points to a branch, which points to the latest commit; commits chain back through their parents.*
+
 You can move a ref by hand with plumbing (carefully):
 
 ```bash
@@ -179,6 +188,16 @@ git cat-file -p 0f2b          # the actual file contents
 ```
 
 You just traversed `commit → tree → tree → blob` by hand. That path — and the fact that it always terminates in blobs — *is* Git's storage model. Everything else is names and history layered on top.
+
+```mermaid
+flowchart TD
+  Commit["Commit initial"] --> Root["Root tree"]
+  Root --> Readme["Blob README.md"]
+  Root --> Src["Tree src"]
+  Src --> App["Blob app.py"]
+```
+
+*Walking commit to tree to tree to blob by hand with plumbing commands.*
 
 ### The plumbing cheat-sheet
 

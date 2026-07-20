@@ -15,6 +15,14 @@ The automation is the part people mean when they say "CI" today. A CI system:
 3. **Runs** a defined sequence of commands — install dependencies, build, lint, test.
 4. **Reports** pass or fail back to the commit and the pull request.
 
+```mermaid
+flowchart LR
+  A["Watch repo for changes"] --> B["Check out into a clean environment"]
+  B --> C["Run install build lint test"]
+  C --> D["Report pass or fail to commit and PR"]
+```
+*The four-step loop a CI system runs on every change.*
+
 The value is not the running of tests — you could do that yourself. The value is that it happens **every time, in a clean environment, whether or not anyone remembers.** "Works on my machine" stops being an argument, because the machine is a fresh, identical container every run.
 
 | Without CI | With CI |
@@ -51,6 +59,16 @@ Everything in Actions is one of five things. Learn these five nouns and you can 
 | **Runner** | The virtual machine that executes a job | The kitchen the dish is cooked in |
 
 Read that table twice. The rest of the lecture is just detail on each row.
+
+```mermaid
+flowchart TD
+  A["Event"] --> B["Workflow triggered"]
+  B --> C["Job on a Runner"]
+  C --> D["Step 1 checkout"]
+  D --> E["Step 2 setup runtime"]
+  E --> F["Step 3 run command"]
+```
+*How an event flows down through workflow and job into sequential steps on a runner.*
 
 ### 3.1 Events
 

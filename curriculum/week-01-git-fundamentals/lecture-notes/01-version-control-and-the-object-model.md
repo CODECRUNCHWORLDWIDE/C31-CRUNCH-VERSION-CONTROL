@@ -73,6 +73,18 @@ commit ──▶ tree ──▶ blob   (file contents)
  parent commit ──▶ tree ──▶ ...
 ```
 
+```mermaid
+flowchart TD
+  Commit["Commit"] --> Tree["Root tree"]
+  Commit --> Parent["Parent commit"]
+  Tree --> Blob1["Blob file one"]
+  Tree --> Subtree["Tree subdirectory"]
+  Subtree --> Blob2["Blob file two"]
+  Parent --> ParentTree["Parent root tree"]
+```
+
+*A commit points to a root tree and a parent commit; trees point to blobs and other trees.*
+
 ### Blobs — the bytes of a file
 
 A **blob** is just file content. It has no filename, no path, no timestamp — only bytes. The filename lives in the *tree* that references the blob, not in the blob itself. That is why renaming a file changes a tree but not the blob: the content didn't change, so its hash didn't change.
@@ -145,6 +157,15 @@ When you run `git commit`, Git does something you could do by hand (and will, in
 1. Takes everything currently staged and builds a **tree** object for it (recursively, one tree per directory). This is what `git write-tree` does.
 2. Creates a **commit** object pointing at that root tree, at the current commit as parent, with your message and identity. This is `git commit-tree`.
 3. Moves the current branch ref to point at the new commit.
+
+```mermaid
+flowchart LR
+  A["Staged content in index"] --> B["git write-tree builds tree object"]
+  B --> C["git commit-tree creates commit object"]
+  C --> D["Branch ref moves to new commit"]
+```
+
+*The three steps git commit performs under the hood.*
 
 You can literally perform those steps with plumbing:
 

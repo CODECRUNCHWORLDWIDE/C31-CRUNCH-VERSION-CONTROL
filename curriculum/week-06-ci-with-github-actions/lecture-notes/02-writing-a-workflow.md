@@ -108,6 +108,16 @@ jobs:
 
 This single job definition expands into **3 × 3 = 9 parallel jobs** — every OS crossed with every Node version. Notes:
 
+```mermaid
+flowchart TD
+  M["Matrix os by node-version"] --> J1["ubuntu-latest and node 18"]
+  M --> J2["ubuntu-latest and node 20"]
+  M --> J3["windows-latest and node 18"]
+  M --> J4["macos-latest and node 22"]
+  M --> J5["5 more parallel jobs"]
+```
+*One matrix definition fans out into one parallel job per os and node-version combination.*
+
 - **`${{ matrix.<key> }}`** is expression syntax; it substitutes the value for the current combination. `runs-on: ${{ matrix.os }}` makes the runner itself vary.
 - **`fail-fast: false`** tells GitHub *not* to cancel the other combinations the moment one fails. The default (`true`) cancels siblings on first failure — fast, but you lose the full picture. For a test matrix you usually want `false` so you see *all* the failures at once.
 - You can **exclude** or **include** specific combinations:
@@ -163,6 +173,20 @@ How it works:
 | `restore-keys` | Ordered fallback prefixes. If no exact `key` match, restore the newest cache whose key starts with `npm-` |
 
 The logic: an **exact key hit** restores instantly and skips re-download. A **miss** falls back to a `restore-keys` prefix (a *partial* cache — better than nothing), then, at job end, saves a new cache under the current `key`. **Caches are immutable** — a key is written once and never overwritten, which is why the key must include a hash that changes when contents change. Stale caches expire automatically after 7 days of no access, and each repo has a total cache size budget.
+
+```mermaid
+flowchart TD
+  A["Job starts"] --> B{"Exact key match found"}
+  B -->|"Yes"| C["Restore cache instantly"]
+  B -->|"No"| D{"Prefix match via restore-keys"}
+  D -->|"Yes"| E["Restore partial cache"]
+  D -->|"No"| F["Start with empty cache"]
+  C --> G["Run job"]
+  E --> G
+  F --> G
+  G --> H["Save new cache under current key"]
+```
+*Cache lookup falls back from an exact key match to a restore-keys prefix before starting clean.*
 
 Caching is an optimization, never a correctness tool. A build must produce the same result cache-hit or cache-miss. Never cache anything whose staleness could hide a bug (e.g. compiled test output).
 
